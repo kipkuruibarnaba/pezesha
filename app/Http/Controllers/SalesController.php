@@ -23,7 +23,6 @@ class SalesController extends Controller
         if($request->has('mycsv'))
         {
             $csv = file($request->mycsv);
-
             //chunking file
             $chunks = array_chunk($csv,50);
 

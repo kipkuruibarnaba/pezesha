@@ -8,10 +8,11 @@ use Illuminate\Http\Request;
 class MarvelController extends Controller
 {
     public function  displaycharacters(){
-        $endpoint = "https://gateway.marvel.com:443/v1/public/characters";
+        $datas = '';
+        $endpoint= env('MARVEL_ENDPOINT');
         $ts = Carbon::now()->timestamp;
-        $apikey= 'b8c7132408cfca5f87609624ce8acdf5';
-        $privatekey= '346adcc62ca66d04503a291fb02d9d15c7ca8788';
+        $apikey= env('API_KEY');
+        $privatekey= env('PRIVATE_KEY');
         $hash = md5($ts.$privatekey.$apikey);
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $endpoint, ['query' => [
@@ -23,7 +24,12 @@ class MarvelController extends Controller
         $contents = ($response->getBody()->getContents());
         $contents = json_decode($contents);
         $datas =$contents->data->results;
-//        dd($datas);
-        return view('admin.marvel.list',compact('datas'));
+        if($contents->code == 200){
+            return view('admin.marvel.list',compact('datas')); 
+        }
+        else {
+            return view('admin.marvel.list',compact('datas'));
+        }
+   
     }
 }
